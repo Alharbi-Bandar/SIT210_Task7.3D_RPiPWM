@@ -1,0 +1,52 @@
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+P_led = 16
+P_trigger = 18
+P_echo = 24
+
+GPIO.setup(P_led, GPIO.OUT)
+
+The_pwm = GPIO.PWM(P_led, 90)
+
+
+GPIO.setup(P_trigger, GPIO.OUT)
+GPIO.setup(P_echo, GPIO.IN)
+
+The_pwm.start(0)
+print ("Distance Measurements")
+
+try:
+    while 1:
+        GPIO.output(P_trigger, GPIO.HIGH)
+
+        time.sleep(0.001)
+
+        GPIO.output(P_trigger, GPIO.LOW)
+        
+        while GPIO.input(P_echo) == False:
+            T_start = time.time()
+
+        while GPIO.input(P_echo) == True:
+            T_end = time.time()
+            
+        period = T_end-T_start
+
+        calculate_Distance = 90 - ((period * 17150) * 2) 
+        if (calculate_Distance < 0): calculate_Distance = 0
+        The_pwm.ChangeDutyCycle(calculate_Distance) 
+        
+        time.sleep(0.1)
+  
+
+except KeyboardInterrupt:
+    pass
+
+    The_pwm.stop()
+    
+    GPIO.cleanup()
+
+
